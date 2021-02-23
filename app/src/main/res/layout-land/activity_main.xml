@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/actionbarApp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_gradient_actionbar"
+        android:minHeight="?attr/actionBarSize"
+        app:title="@string/app_name"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <include layout="@layout/display"/>
+    <com.mohammad.kk.mycalculator.views.SlideViewPager
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:overScrollMode="never"
+        app:padMargin="-24dp"
+        android:id="@+id/slideViewPager">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+            <include
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                layout="@layout/pad_calculator"/>
+            <include
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                layout="@layout/pad_advanced"/>
+        </LinearLayout>
+    </com.mohammad.kk.mycalculator.views.SlideViewPager>
+
+</LinearLayout>

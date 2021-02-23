@@ -1,0 +1,21 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".HistoryActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/actionbarHistory"
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:background="@drawable/bg_gradient_actionbar"
+        app:title="History Calculator"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listHistoryExpression"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

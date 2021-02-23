@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ResizingEditText">
+        <attr name="minTextSize" format="dimension"/>
+        <attr name="maxTextSize" format="dimension"/>
+        <attr name="stepTextSize" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="SlideViewPager">
+        <attr name="padMargin" format="dimension"/>
+    </declare-styleable>
+</resources>
