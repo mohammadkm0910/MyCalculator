@@ -11,6 +11,7 @@ class NumberTextWatcherForThousand(private var edtText: EditText) : TextWatcher 
     }
     override fun afterTextChanged(s: Editable) {
         try {
+            EDITABLE = s.toString()
             edtText.removeTextChangedListener(this)
             val value = edtText.text.toString()
             if (value != "") {
@@ -22,6 +23,7 @@ class NumberTextWatcherForThousand(private var edtText: EditText) : TextWatcher 
                 }
                 val str = edtText.text.toString().replace(",".toRegex(), "")
                 if (value != "") edtText.setText(onlyNumber(str))
+                edtText.setSelection(onlyNumber(str).length)
             }
             edtText.addTextChangedListener(this)
             return
@@ -29,5 +31,8 @@ class NumberTextWatcherForThousand(private var edtText: EditText) : TextWatcher 
             ex.printStackTrace()
             edtText.addTextChangedListener(this)
         }
+    }
+    companion object {
+        var EDITABLE = ""
     }
 }

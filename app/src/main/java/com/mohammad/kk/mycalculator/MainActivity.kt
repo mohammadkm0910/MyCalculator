@@ -32,6 +32,20 @@ class MainActivity : AppCompatActivity() {
     private var currentState = CalculatorState.DEFAULT
     private fun getInput():String = edtInput.text.toString()
     private fun getOutput():String = edtOutput.text.toString()
+    private fun commaCount():Int {
+        var count = 0
+        for (i in getInput()){
+            if (i == ',') ++count
+        }
+        return count
+    }
+    private fun editableCommaCount(): Int {
+        var count = 0
+        for (i in NumberTextWatcherForThousand.EDITABLE) {
+            if (i == ',') ++count
+        }
+        return count
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -51,10 +65,15 @@ class MainActivity : AppCompatActivity() {
     }
     private fun updateText(strToAdd: String) {
         val cursorPos = edtInput.selectionStart
-        val rightStr = getInput().substring(0,cursorPos)
-        val leftStr = getInput().substring(cursorPos)
-        edtInput.setText(String.format("%s%s%s",rightStr,strToAdd,leftStr))
-        edtInput.setSelection(edtInput.length())
+        val leftStr = getInput().substring(0,cursorPos)
+        val rightStr = getInput().substring(cursorPos)
+        edtInput.setText(String.format("%s%s%s",leftStr,strToAdd,rightStr))
+        if (leftStr.endsWith(",") && !strToAdd[0].isDigit()) return
+        if (editableCommaCount() == commaCount() || !strToAdd[0].isDigit()) {
+            edtInput.setSelection(cursorPos + 1)
+        }  else {
+            edtInput.setSelection(cursorPos + 2)
+        }
     }
     private fun setStateDisplay() {
         edtInput.showSoftInputOnFocus = false
