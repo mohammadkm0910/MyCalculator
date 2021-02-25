@@ -18,6 +18,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.mohammad.kk.mycalculator.database.RecordExpression
+import com.mohammad.kk.mycalculator.utils.CheckExpression
 import com.mohammad.kk.mycalculator.utils.NumberTextWatcherForThousand
 import com.mohammad.kk.mycalculator.utils.getDecimalFormattedString
 import com.mohammad.kk.mycalculator.views.ResizingEditText
@@ -68,11 +69,20 @@ class MainActivity : AppCompatActivity() {
         val leftStr = getInput().substring(0,cursorPos)
         val rightStr = getInput().substring(cursorPos)
         edtInput.setText(String.format("%s%s%s",leftStr,strToAdd,rightStr))
-        if (leftStr.endsWith(",") && !strToAdd[0].isDigit()) return
-        if (editableCommaCount() == commaCount() || !strToAdd[0].isDigit()) {
-            edtInput.setSelection(cursorPos + 1)
-        }  else {
-            edtInput.setSelection(cursorPos + 2)
+        if (CheckExpression.isOperatorLastIndex(strToAdd) || CheckExpression.isParenthesisLastIndex(strToAdd) || CheckExpression.isPointIndex(strToAdd)) {
+            if (leftStr.endsWith(",")) {
+                edtInput.setSelection(cursorPos)
+            } else if (!leftStr.endsWith(",") && !rightStr.startsWith(",") && editableCommaCount() > commaCount()) {
+                edtInput.setSelection(cursorPos)
+            } else {
+                edtInput.setSelection(cursorPos + 1)
+            }
+        } else {
+            if (editableCommaCount() == commaCount()) {
+                edtInput.setSelection(cursorPos + 1)
+            }  else {
+                edtInput.setSelection(cursorPos + 2)
+            }
         }
     }
     private fun setStateDisplay() {
@@ -198,8 +208,12 @@ class MainActivity : AppCompatActivity() {
                     edtInput.setText("")
                 else {
                     val cursorPos = edtInput.selectionStart
+                    val cursorEnd = edtInput.selectionEnd
+                    val textSelection = getInput().substring(cursorPos,cursorEnd)
                     val lastPos = edtInput.length()
-                    if (cursorPos != lastPos && cursorPos != 0) {
+                    if (textSelection.isNotEmpty()) {
+                        edtInput.setText(getInput().replaceFirst(textSelection,""))
+                    } else if (cursorPos != lastPos && cursorPos != 0) {
                         val rightStr = getInput().substring(0,cursorPos)
                         val leftStr = getInput().substring(cursorPos)
                         val newRightStr = rightStr.substring(0,rightStr.length-1)

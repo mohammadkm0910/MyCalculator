@@ -37,6 +37,10 @@ class AdapterExpressionRecycler(private var ctx: Context, private var calcDataLi
         notifyItemRemoved(position)
         notifyItemRangeChanged(position, calcDataLists.size)
     }
+    fun removeAll() {
+        calcDataLists.clear()
+        notifyDataSetChanged()
+    }
     fun restoreAt(calcData: CalcData, position: Int) {
         calcDataLists.add(position,calcData)
         notifyItemInserted(position)

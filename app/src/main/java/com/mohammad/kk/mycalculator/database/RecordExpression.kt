@@ -67,6 +67,17 @@ class RecordExpression(private var context: Context?) : SQLiteOpenHelper(context
             false
         }
     }
+    fun deleteAllExpression(): Boolean {
+        val db = this.writableDatabase
+        return try {
+            db.execSQL("DELETE FROM $TABLE_NAME")
+            db.close()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
     companion object {
         private const val DATABASE_VERSION = 1
         private const val DATABASE_NAME = "calc_history.db"

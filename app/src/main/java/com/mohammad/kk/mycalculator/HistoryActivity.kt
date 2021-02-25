@@ -1,11 +1,13 @@
 package com.mohammad.kk.mycalculator
 
 import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
+import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -16,6 +18,7 @@ import com.mohammad.kk.mycalculator.adapters.AdapterExpressionRecycler
 import com.mohammad.kk.mycalculator.database.RecordExpression
 import com.mohammad.kk.mycalculator.models.CalcData
 import kotlinx.android.synthetic.main.activity_history.*
+import kotlinx.android.synthetic.main.danger_dialog.view.*
 
 class HistoryActivity : AppCompatActivity() {
     private lateinit var recordExpression : RecordExpression
@@ -48,6 +51,26 @@ class HistoryActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.clearAllHistory -> {
+                val builder = AlertDialog.Builder(this)
+                val viewDialogDanger = LayoutInflater.from(this).inflate(R.layout.danger_dialog,findViewById(R.id.dangerDialogContainer))
+                builder.setView(viewDialogDanger)
+                val dialog = builder.create()
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                viewDialogDanger.fabClose.setOnClickListener {
+                    dialog.dismiss()
+                }
+                viewDialogDanger.fabDone.setOnClickListener {
+                    recordExpression.deleteAllExpression()
+                    adapterExpressionRecycler.removeAll()
+                    Snackbar.make(listHistoryExpression,"All computing history deleted !!",Snackbar.LENGTH_LONG).show()
+                    dialog.dismiss()
+                }
+                dialog.show()
+            }
+        }
         return super.onOptionsItemSelected(item)
     }
     private fun enableSwipe() {

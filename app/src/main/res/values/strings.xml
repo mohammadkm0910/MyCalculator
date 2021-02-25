@@ -28,4 +28,6 @@
     <string name="current_time_now">yyyy-MM-dd HH:mm:ss</string>
     <string name="default_error">Error!</string>
     <string name="clear_all_db">clear all history</string>
+    <string name="default_title_danger_dialog">Delete all app history</string>
+    <string name="default_message_danger_dialog">Are you sure you want to delete all of your computational history?</string>
 </resources>
