@@ -16,8 +16,10 @@ class NumberTextWatcherForThousand(private var edtText: EditText) : TextWatcher 
             val value = edtText.text.toString()
             if (value != "") {
                 val str = edtText.text.toString().replace(",".toRegex(), "")
-                if (value != "") edtText.setText(CheckExpression.replaceSingleParenthesis(onlyNumber(str)))
-                edtText.setSelection(CheckExpression.replaceSingleParenthesis(onlyNumber(str)).length)
+                val str2 = CheckExpression.replaceSingleParenthesis(str)
+                val str3 = onlyNumber(str2)
+                if (value != "") edtText.setText(str3)
+                edtText.setSelection(str3.length)
             }
             edtText.addTextChangedListener(this)
             return

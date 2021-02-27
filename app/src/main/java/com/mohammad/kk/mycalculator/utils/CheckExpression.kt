@@ -33,6 +33,10 @@ class CheckExpression {
         fun isPercentLastIndex(str: String):Boolean {
             return str.endsWith("%")
         }
+        fun isPercentAppendedOperatorLastIndex(str: String):Boolean {
+            return str.endsWith("%+") || str.endsWith("%-") || str.endsWith("%×") ||
+                    str.endsWith("%÷") || str.endsWith("%^")
+        }
         fun replaceSingleParenthesis(str: String): String {
             var newStr = str
             newStr = newStr.replace("(1)", circle_1)
