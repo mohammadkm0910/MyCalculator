@@ -1,24 +1,25 @@
 <resources>
     <string name="app_name">My Calculator</string>
-    <string name="zero">0</string>
-    <string name="one">1</string>
-    <string name="two">2</string>
-    <string name="three">3</string>
-    <string name="four">4</string>
-    <string name="five">5</string>
-    <string name="six">6</string>
-    <string name="seven">7</string>
-    <string name="eight">8</string>
-    <string name="nine">9</string>
+    <string name="_0">0</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
+    <string name="_6">6</string>
+    <string name="_7">7</string>
+    <string name="_8">8</string>
+    <string name="_9">9</string>
+    <string name="percent">%</string>
+    <string name="open_parentheses">(</string>
+    <string name="close_parentheses">)</string>
     <string name="clear">C</string>
     <string name="exponent">^</string>
-    <string name="parentheses">()</string>
     <string name="divide">÷</string>
     <string name="multiply">×</string>
     <string name="add">+</string>
     <string name="subtract">-</string>
-    <string name="plusMinus">±</string>
-    <string name="point">.</string>
+    <string name="dot">.</string>
     <string name="equal">=</string>
     <string name="display">Enter a Value</string>
     <string name="open_history">open history page</string>
@@ -30,4 +31,15 @@
     <string name="clear_all_db">clear all history</string>
     <string name="default_title_danger_dialog">Delete all app history</string>
     <string name="default_message_danger_dialog">Are you sure you want to delete all of your computational history?</string>
+    <string name="sin">sin</string>
+    <string name="cos">cos</string>
+    <string name="tan">tan</string>
+    <string name="a_sin">sin⁻¹</string>
+    <string name="a_cos">cos⁻¹</string>
+    <string name="a_tan">tan⁻¹</string>
+    <string name="factorial">!</string>
+    <string name="log">log</string>
+    <string name="root">√</string>
+    <string name="pi">π</string>
+    <string name="e">e</string>
 </resources>

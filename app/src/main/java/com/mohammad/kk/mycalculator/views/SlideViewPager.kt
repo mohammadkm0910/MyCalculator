@@ -43,6 +43,7 @@ class SlideViewPager : ViewPager {
             }
         }
         override fun onPageSelected(position: Int) {
+
             if (adapter === staticPagerAdapter) {
                 for (childIndex in 0 until childCount) {
                     recursivelySetEnabled(getChildAt(childIndex), childIndex == position)

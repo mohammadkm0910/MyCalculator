@@ -1,8 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#4FC3F7">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageButton
+        android:id="@+id/callBackSlide"
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/ic_arrow_left"
+        android:layout_gravity="center_vertical|start"
+        android:background="@android:color/transparent"
+        android:tint="@color/white"
+        android:contentDescription="@null" />
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/padding_end_pad_calculator">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/btnSin"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/sin"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnCos"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/cos"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnTan"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/tan"
+                android:textAllCaps="false"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/btnASin"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/a_sin"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnACos"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/a_cos"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnATan"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/a_tan"
+                android:textAllCaps="false"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/btnE"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/e"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnLog"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/log"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnExponent"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/exponent"
+                android:textAllCaps="false"
+                android:onClick="appendOperator"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/btnFactorial"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/factorial"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnRoot"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/root"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btnPi"
+                style="@style/ThemeButtonCalculatorWeight"
+                android:background="@drawable/bg_round"
+                android:text="@string/pi"
+                android:textAllCaps="false"/>
+        </TableRow>
+    </TableLayout>
+</FrameLayout>

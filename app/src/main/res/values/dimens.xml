@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="padding_end_pad_calculator">24dp</dimen>
+    <dimen name="edit_input_text_size_max">50sp</dimen>
+    <dimen name="edit_output_text_size">24sp</dimen>
+    <dimen name="edit_input_text_size_min">24sp</dimen>
+    <dimen name="edit_input_padding_horizontal">16dp</dimen>
+    <dimen name="edit_input_padding_vertical">24dp</dimen>
+    <dimen name="edit_output_padding_horizontal">16dp</dimen>
+    <dimen name="edit_output_padding_vertical">18dp</dimen>
 </resources>

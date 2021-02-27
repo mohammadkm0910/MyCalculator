@@ -2,6 +2,16 @@ package com.mohammad.kk.mycalculator.utils
 
 import java.util.regex.Pattern
 
+internal const val circle_1 = "➀"
+internal const val circle_2 = "➁"
+internal const val circle_3 = "➂"
+internal const val circle_4 = "➃"
+internal const val circle_5 = "➄"
+internal const val circle_6 = "➅"
+internal const val circle_7 = "➆"
+internal const val circle_8 = "➇"
+internal const val circle_9 = "➈"
+
 internal fun getDecimalFormattedString(value: String): String {
     return if (value.contains(".")) {
         val x = value.split("\\.".toRegex()).toTypedArray()
@@ -18,22 +28,4 @@ internal fun onlyNumber(value: String):String{
         text = text.replaceFirst(m.group(), getDecimalFormattedString(m.group()))
     }
     return text
-}
-internal fun String.toEnDigits():String {
-    var getStr = this
-    val digits = arrayOf(
-        arrayOf("۰", "0"),
-        arrayOf("۱", "1"),
-        arrayOf("۲", "2"),
-        arrayOf("۳", "3"),
-        arrayOf("۴", "4"),
-        arrayOf("۵", "5"),
-        arrayOf("۶", "6"),
-        arrayOf("۷", "7"),
-        arrayOf("۸", "8"),
-        arrayOf("۹", "9"))
-    for (i in digits) {
-        getStr = getStr.replace(i[0],i[1])
-    }
-    return getStr
 }

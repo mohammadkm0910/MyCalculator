@@ -17,76 +17,78 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
 import com.mohammad.kk.mycalculator.database.RecordExpression
 import com.mohammad.kk.mycalculator.utils.CheckExpression
 import com.mohammad.kk.mycalculator.utils.NumberTextWatcherForThousand
+import com.mohammad.kk.mycalculator.utils.circle_1
 import com.mohammad.kk.mycalculator.utils.getDecimalFormattedString
 import com.mohammad.kk.mycalculator.views.ResizingEditText
+import com.mohammad.kk.mycalculator.views.SlideViewPager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.pad_calculator.*
 import kotlinx.android.synthetic.main.display.*
+import kotlinx.android.synthetic.main.pad_advanced.*
 import org.mariuszgromada.math.mxparser.Expression
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var recordExpression: RecordExpression
     private var currentState = CalculatorState.DEFAULT
+    private var isDot = false
     private fun getInput():String = edtInput.text.toString()
     private fun getOutput():String = edtOutput.text.toString()
-    private fun commaCount():Int {
-        var count = 0
-        for (i in getInput()){
-            if (i == ',') ++count
-        }
-        return count
-    }
-    private fun editableCommaCount(): Int {
-        var count = 0
-        for (i in NumberTextWatcherForThousand.EDITABLE) {
-            if (i == ',') ++count
-        }
-        return count
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         recordExpression = RecordExpression(this)
         setSupportActionBar(actionbarApp)
+        slideViewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                if (position == 1) {
+                    callBackSlide.animate().rotation(180F).start()
+                }
+                else {
+                    callBackSlide.animate().rotation(0F).start()
+                }
+            }
+        })
+        callBackSlide.setOnClickListener {
+            if (slideViewPager.currentItem == 0)
+                slideViewPager.currentItem = 1
+            else
+                slideViewPager.currentItem = 0
+        }
+        appendParentheses()
         setStateDisplay()
-        onClickBtnCalculator()
+        clearDisplay()
     }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putSerializable("currentState",currentState)
+        outState.putBoolean("isDot",isDot)
     }
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         currentState = savedInstanceState.getSerializable("currentState") as CalculatorState
+        isDot = savedInstanceState.getBoolean("isDot")
         setState(currentState)
     }
-    private fun updateText(strToAdd: String) {
-        val cursorPos = edtInput.selectionStart
-        val leftStr = getInput().substring(0,cursorPos)
-        val rightStr = getInput().substring(cursorPos)
-        edtInput.setText(String.format("%s%s%s",leftStr,strToAdd,rightStr))
-        if (CheckExpression.isOperatorLastIndex(strToAdd) || CheckExpression.isParenthesisLastIndex(strToAdd) || CheckExpression.isPointIndex(strToAdd)) {
-            if (leftStr.endsWith(",")) {
-                edtInput.setSelection(cursorPos)
-            } else if (!leftStr.endsWith(",") && !rightStr.startsWith(",") && editableCommaCount() > commaCount()) {
-                edtInput.setSelection(cursorPos)
-            } else {
-                edtInput.setSelection(cursorPos + 1)
-            }
+    override fun onResume() {
+        super.onResume()
+        if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            callBackSlide.visibility = View.VISIBLE
         } else {
-            if (editableCommaCount() == commaCount()) {
-                edtInput.setSelection(cursorPos + 1)
-            }  else {
-                edtInput.setSelection(cursorPos + 2)
-            }
+            callBackSlide.visibility = View.GONE
         }
+    }
+    private fun updateText(strToAdd: String) {
+        edtInput.setText(String.format("%s%s",getInput(),strToAdd))
     }
     private fun setStateDisplay() {
         edtInput.showSoftInputOnFocus = false
+        edtInput.setTextIsSelectable(false)
+        edtInput.inputType = InputType.TYPE_NULL
         edtInput.addTextChangedListener(NumberTextWatcherForThousand(edtInput))
         edtInput.setOnTextSizeChangeListener(object : ResizingEditText.OnTextSizeChangeListener {
             override fun onTextSizeChanged(textView: TextView?, oldSize: Float) {
@@ -113,14 +115,6 @@ class MainActivity : AppCompatActivity() {
         })
         edtOutput.inputType = InputType.TYPE_NULL
     }
-    fun appendNumber(view: View) {
-        val digits = (view as Button).text.toString()
-        updateText(digits)
-    }
-    fun appendOperator(view: View) {
-        val digits = (view as Button).text.toString()
-        updateText(digits)
-    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_options,menu)
         return super.onCreateOptionsMenu(menu)
@@ -133,6 +127,116 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onContextItemSelected(item)
+    }
+    fun appendNumber(view: View) {
+        val digits = (view as Button).text.toString()
+        if (CheckExpression.isParenthesisLastIndex(getInput(),2) || CheckExpression.isPercentLastIndex(getInput())) {
+            updateText("×$digits")
+        } else {
+            updateText(digits)
+        }
+    }
+    fun appendOperator(view: View) {
+        isDot = false
+        val opr = (view as Button).text.toString()
+        if (getInput().isNotEmpty()) {
+            if (!CheckExpression.isOperatorNotMinusLastIndex(getInput()) && !getInput().endsWith("-")) {
+                if (CheckExpression.isDotLastIndex(getInput())) {
+                    edtInput.setText(getInput().substring(0,getInput().length-1))
+                    updateText(opr)
+                } else if (getInput().last().isDigit()) {
+                    updateText(opr)
+                }
+            } else {
+                if (opr == "-") {
+                    if (!getInput().endsWith("-")) updateText("-")
+                } else {
+                    if (getInput().endsWith("-")) {
+                        if (CheckExpression.isOperatorAppendedMinusLastIndex(getInput())){
+                            edtInput.setText(getInput().substring(0,getInput().length-2))
+                        } else {
+                            edtInput.setText(getInput().substring(0,getInput().length-1))
+                        }
+                        updateText(opr)
+                    } else {
+                        edtInput.setText(getInput().substring(0,getInput().length-1))
+                        updateText(opr)
+                    }
+                }
+            }
+        }
+    }
+   private fun appendParentheses() {
+        isDot = false
+        btnOpenParentheses.setOnClickListener {
+            if (getInput().isNotEmpty() && getInput().last().isDigit()) {
+                updateText("×(")
+            } else if (CheckExpression.isDotLastIndex(getInput())) {
+                var backSpace = getInput().substring(0, getInput().length - 1)
+                backSpace += "×("
+                edtInput.setText(backSpace)
+            } else {
+                updateText("(")
+            }
+        }
+        btnCloseParentheses.setOnClickListener {
+
+            if ((getInput().isNotEmpty() && getInput().last().isDigit()) || CheckExpression.isPercentLastIndex(getInput()) ||
+                    CheckExpression.isCircleDigitLastIndex(getInput()) || CheckExpression.isParenthesisLastIndex(getInput(),2)) {
+                updateText(")")
+            } else if (CheckExpression.isDotLastIndex(getInput())) {
+                updateText("0)")
+            }
+        }
+    }
+    fun appendDot(view: View) {
+        if (!isDot){
+            isDot = true
+            when {
+                getInput().isEmpty() -> {
+                    updateText("0.")
+                }
+                CheckExpression.isOperatorLastIndex(getInput()) -> {
+                    updateText("0.")
+                }
+                CheckExpression.isParenthesisLastIndex(getInput(),1) -> {
+                    updateText("0.")
+                }
+                CheckExpression.isParenthesisLastIndex(getInput(),2) -> {
+                    updateText("×0.")
+                }
+                CheckExpression.isParenthesisLastIndex(getInput()) -> {
+                    updateText("×0.")
+                }
+                else -> {
+                    updateText(".")
+                }
+            }
+        }
+    }
+    fun appendPercent(view: View) {
+        updateText("%")
+    }
+    fun getEqualResult(view: View) {
+        if (getInput().isNotEmpty()) {
+            var userExp = CheckExpression.replaceSingleReverseParenthesis(getInput())
+            userExp = userExp.replace("÷","/")
+            userExp = userExp.replace("×","*")
+            userExp = userExp.replace("+-","-")
+            userExp = userExp.replace(",","")
+            try {
+                val exp = Expression(userExp)
+                val result = exp.calculate().toBigDecimal()
+                val edtArrays = arrayOf(getInput(), getDecimalFormattedString(result.toString()))
+                edtInput.setText(getDecimalFormattedString(result.toString()))
+                edtOutput.setText("")
+                setState(CalculatorState.RESULT)
+                recordExpression.saveExpression(edtArrays[0],edtArrays[1])
+            } catch (e: Exception) {
+                setState(CalculatorState.ERROR)
+                edtOutput.setText(getString(R.string.default_error))
+            }
+        }
     }
     private fun setState(state:CalculatorState) {
        when(state) {
@@ -159,69 +263,23 @@ class MainActivity : AppCompatActivity() {
            }
        }
     }
-    private fun onClickBtnCalculator() {
-        btnZero.setOnClickListener {
-            updateText("0")
-        }
-        btnPoint.setOnClickListener {
-            updateText(".")
-        }
-        btnExponent.setOnClickListener {
-            updateText("^")
-        }
-        btnParentheses.setOnClickListener {
-            var openPar = 0
-            var closePar = 0
-            for (element in getInput().indices){
-                if (getInput()[element] == '(') openPar += 1
-                if (getInput()[element] == ')') closePar += 1
-            }
-            if (openPar == closePar || getInput().endsWith("(")) {
-                updateText("(")
-            } else if (closePar < openPar && !getInput().endsWith("(")) {
-                updateText(")")
-            }
-        }
-        btnEqual.setOnClickListener {
-            if (getInput().isNotEmpty()) {
-                var userExp = edtInput.text.toString()
-                userExp = userExp.replace("÷","/")
-                userExp = userExp.replace("×","*")
-                userExp = userExp.replace(",","")
-                try {
-                    val exp = Expression(userExp)
-                    val result = exp.calculate().toBigDecimal()
-                    val edtArrays = arrayOf(getInput(), getDecimalFormattedString(result.toString()))
-                    edtInput.setText(getDecimalFormattedString(result.toString()))
-                    edtOutput.setText("")
-                    setState(CalculatorState.RESULT)
-                    recordExpression.saveExpression(edtArrays[0],edtArrays[1])
-                } catch (e: Exception) {
-                    setState(CalculatorState.ERROR)
-                    edtOutput.setText(getString(R.string.default_error))
-                }
-            }
-        }
+    private fun clearDisplay() {
+
         btnClear.setOnClickListener {
             if(getInput().isNotEmpty()){
                 if (currentState == CalculatorState.RESULT || currentState == CalculatorState.ERROR)
                     edtInput.setText("")
                 else {
-                    val cursorPos = edtInput.selectionStart
-                    val cursorEnd = edtInput.selectionEnd
-                    val textSelection = getInput().substring(cursorPos,cursorEnd)
-                    val lastPos = edtInput.length()
-                    if (textSelection.isNotEmpty()) {
-                        edtInput.setText(getInput().replaceFirst(textSelection,""))
-                    } else if (cursorPos != lastPos && cursorPos != 0) {
-                        val rightStr = getInput().substring(0,cursorPos)
-                        val leftStr = getInput().substring(cursorPos)
-                        val newRightStr = rightStr.substring(0,rightStr.length-1)
-                        edtInput.setText(String.format("%s%s",newRightStr,leftStr))
+                    if (CheckExpression.isCircleDigitLastIndex(getInput())){
+                        val lastP = getInput().last().toString()
+                        val subLastP = CheckExpression.replaceSingleReverseParenthesis(lastP).substring(0,2)
+                        edtInput.setText(getInput().substring(0,getInput().length-1))
+                        updateText(subLastP)
+                    } else if (getInput().endsWith("0.")){
+                        edtInput.setText(getInput().substring(0,getInput().length-2))
                     } else {
                         edtInput.setText(getInput().substring(0,getInput().length-1))
                     }
-                    edtInput.setSelection(edtInput.length())
                 }
             }
         }
@@ -239,9 +297,10 @@ class MainActivity : AppCompatActivity() {
     }
     private fun eval(): String {
         if (getInput().isNotEmpty()) {
-            var userExp = edtInput.text.toString()
+            var userExp = CheckExpression.replaceSingleReverseParenthesis(getInput())
             userExp = userExp.replace("÷","/")
             userExp = userExp.replace("×","*")
+            userExp = userExp.replace("+-","-")
             userExp = userExp.replace(",","")
             return try {
                 val exp = Expression(userExp)
