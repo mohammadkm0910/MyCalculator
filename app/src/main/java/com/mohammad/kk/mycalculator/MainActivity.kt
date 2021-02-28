@@ -19,9 +19,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.mohammad.kk.mycalculator.database.RecordExpression
-import com.mohammad.kk.mycalculator.utils.CheckExpression
-import com.mohammad.kk.mycalculator.utils.NumberTextWatcherForThousand
+import com.mohammad.kk.mycalculator.utils.*
 import com.mohammad.kk.mycalculator.utils.circle_1
+import com.mohammad.kk.mycalculator.utils.circle_4
 import com.mohammad.kk.mycalculator.utils.getDecimalFormattedString
 import com.mohammad.kk.mycalculator.views.ResizingEditText
 import com.mohammad.kk.mycalculator.views.SlideViewPager
@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordExpression: RecordExpression
     private var currentState = CalculatorState.DEFAULT
     private var isDot = false
-    private var isPercentLast = false
     private fun getInput(): String = edtInput.text.toString()
     private fun getOutput(): String = edtOutput.text.toString()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,22 +62,17 @@ class MainActivity : AppCompatActivity() {
         setStateDisplay()
         clearDisplay()
     }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putSerializable("currentState", currentState)
         outState.putBoolean("isDot", isDot)
-        outState.putBoolean("isPercentLast", isPercentLast)
     }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         currentState = savedInstanceState.getSerializable("currentState") as CalculatorState
         isDot = savedInstanceState.getBoolean("isDot")
-        isPercentLast = savedInstanceState.getBoolean("isPercentLast")
         setState(currentState)
     }
-
     override fun onResume() {
         super.onResume()
         if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -152,38 +146,40 @@ class MainActivity : AppCompatActivity() {
         isDot = false
         val opr = (view as Button).text.toString()
         if (getInput().isNotEmpty()) {
-            if (!CheckExpression.isPercentLastIndex(getInput())) {
-                if (!CheckExpression.isOperatorNotMinusLastIndex(getInput()) && !getInput().endsWith("-")) {
-                    if (CheckExpression.isDotLastIndex(getInput())) {
-                        edtInput.setText(getInput().substring(0, getInput().length - 1))
-                        updateText(opr)
-                    } else if (getInput().last().isDigit() || CheckExpression.isCircleDigitLastIndex(getInput()) ||
-                            CheckExpression.isParenthesisLastIndex(getInput(), 2) || CheckExpression.isPercentLastIndex(getInput())) {
-                        updateText(opr)
-                    }
-                } else {
-                    if (opr == "-" && !CheckExpression.isPercentLastIndex(getInput()) && !isPercentLast) {
-                        if (!getInput().endsWith("-")) updateText("-")
-                    } else {
-                        if (getInput().endsWith("-")) {
-                            if (CheckExpression.isOperatorAppendedMinusLastIndex(getInput())) {
-                                edtInput.setText(getInput().substring(0, getInput().length - 2))
-                            } else {
-                                edtInput.setText(getInput().substring(0, getInput().length - 1))
-                            }
-                            updateText(opr)
-                        } else {
-                            edtInput.setText(getInput().substring(0, getInput().length - 1))
-                            updateText(opr)
-                        }
-                    }
-                }
-            } else {
-                if (!CheckExpression.isOperatorLastIndex(getInput())){
+            if ((CheckExpression.isPercentLastIndex(getInput()) || CheckExpression.isPercentLastIndex(getInput().substring(0,getInput().length-1))) ||
+                    (CheckExpression.isCircleDigitLastIndex(getInput()) || CheckExpression.isCircleDigitLastIndex(getInput().substring(0,getInput().length-1))) ||
+                    (CheckExpression.isParenthesisLastIndex(getInput(),2) || CheckExpression.isParenthesisLastIndex(getInput().substring(0,getInput().length-1),2))){
+                if (!CheckExpression.isOperatorLastIndex(getInput())) {
                     updateText(opr)
                 } else {
                     edtInput.setText(getInput().substring(0, getInput().length - 1))
                     updateText(opr)
+                }
+            } else if (!CheckExpression.isOperatorNotMinusLastIndex(getInput()) && !getInput().endsWith("-")) {
+                if (CheckExpression.isDotLastIndex(getInput())) {
+                    edtInput.setText(getInput().substring(0, getInput().length - 1))
+                    updateText(opr)
+                } else if (getInput().last().isDigit() || CheckExpression.isCircleDigitLastIndex(getInput()) ||
+                        CheckExpression.isParenthesisLastIndex(getInput(), 2) || CheckExpression.isPercentLastIndex(getInput())) {
+                    updateText(opr)
+                }
+            } else {
+                if (opr == "-") {
+                    if (!getInput().endsWith("-")) {
+                        updateText("-")
+                    }
+                } else {
+                    if (getInput().endsWith("-")) {
+                        if (CheckExpression.isOperatorAppendedMinusLastIndex(getInput())) {
+                            edtInput.setText(getInput().substring(0, getInput().length - 2))
+                        } else {
+                            edtInput.setText(getInput().substring(0, getInput().length - 1))
+                        }
+                        updateText(opr)
+                    } else {
+                        edtInput.setText(getInput().substring(0, getInput().length - 1))
+                        updateText(opr)
+                    }
                 }
             }
         }
@@ -210,7 +206,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     fun appendDot(view: View) {
         if (!isDot) {
             isDot = true
@@ -227,6 +222,9 @@ class MainActivity : AppCompatActivity() {
                 CheckExpression.isParenthesisLastIndex(getInput(), 2) -> {
                     updateText("×0.")
                 }
+                CheckExpression.isCircleDigitLastIndex(getInput()) -> {
+                    updateText("×0.")
+                }
                 CheckExpression.isParenthesisLastIndex(getInput()) -> {
                     updateText("×0.")
                 }
@@ -237,7 +235,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
     fun appendPercent(view: View) {
-        isPercentLast = true
         if (getInput().isNotEmpty()) {
             if (getInput().last().isDigit() || CheckExpression.isDotLastIndex(getInput()) || CheckExpression.isPercentLastIndex(getInput())) {
                 if (!CheckExpression.isPercentLastIndex(getInput())) {
@@ -331,9 +328,6 @@ class MainActivity : AppCompatActivity() {
                 if (CheckExpression.isDotLastIndex(getInput())) {
                     isDot = false
                 }
-                if (CheckExpression.isPercentLastIndex(getInput())) {
-                    isPercentLast = false
-                }
                 if (currentState == CalculatorState.RESULT || currentState == CalculatorState.ERROR)
                     edtInput.setText("")
                 else {
@@ -358,7 +352,6 @@ class MainActivity : AppCompatActivity() {
             edtInput.setText("")
             edtOutput.setText("")
             isDot = false
-            isPercentLast = false
             true
         }
     }
@@ -389,7 +382,6 @@ class MainActivity : AppCompatActivity() {
             return ""
         }
     }
-
     private enum class CalculatorState {
         ERROR, RESULT, DEFAULT
     }

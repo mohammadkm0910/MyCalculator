@@ -49,6 +49,7 @@ class CheckExpression {
             newStr = newStr.replace("(9)", circle_9)
             return newStr
         }
+
         fun replaceSingleReverseParenthesis(str: String): String {
             var newStr = str
             newStr = newStr.replace(circle_1,"(1)")
