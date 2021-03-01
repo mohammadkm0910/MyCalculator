@@ -27,31 +27,14 @@
             style="@style/ThemeButtonCalculatorWeight"
             android:background="@drawable/bg_round"
             android:text="@string/close_parentheses"/>
-        <FrameLayout
+        <ImageButton
             android:id="@+id/btnClear"
             style="@style/ThemeButtonCalculatorWeight"
-            android:background="@drawable/bg_round_red"
+            android:background="@drawable/bg_round"
+            android:backgroundTint="@color/red_500"
             android:backgroundTintMode="add"
-            app:tint="@color/white">
-            <ImageView
-                android:id="@+id/backspace"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:backgroundTint="@color/red_500"
-                android:src="@drawable/ic_backspace"
-                android:scaleType="center"
-                android:contentDescription="@null"
-                app:tint="@color/white"/>
-            <TextView
-                android:id="@+id/clear"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/clear"
-                android:textColor="@color/white"
-                android:gravity="center"
-                android:textSize="24sp"
-                android:visibility="gone"/>
-        </FrameLayout>
+            app:tint="@color/white"
+            android:src="@drawable/ic_backspace"/>
     </TableRow>
     <TableRow
         android:layout_width="match_parent"
@@ -160,8 +143,9 @@
             android:id="@+id/btnEqual"
             style="@style/ThemeButtonCalculatorWeight"
             android:background="@drawable/bg_round"
+            android:backgroundTint="@color/green_500"
             android:text="@string/equal"
-            android:onClick="getEqualResult"/>
+            android:onClick="getEqualResult" />
         <Button
             android:id="@+id/btnSubtract"
             style="@style/ThemeButtonCalculatorWeight"

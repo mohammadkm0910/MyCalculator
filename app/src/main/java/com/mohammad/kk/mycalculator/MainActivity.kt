@@ -128,6 +128,11 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, HistoryActivity::class.java)
                 startActivity(intent)
             }
+            R.id.openAboutUs-> {
+                val intent = Intent(this, AboutActivity::class.java)
+                startActivity(intent)
+            }
+
         }
         return super.onContextItemSelected(item)
     }
@@ -272,7 +277,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     fun getEqualResult(view: View) {
         if (getInput().isNotEmpty()) {
             var userExp = CheckExpression.replaceSingleReverseParenthesis(getInput())
@@ -285,9 +289,9 @@ class MainActivity : AppCompatActivity() {
                 val result = exp.calculate().toBigDecimal()
                 val edtArrays = arrayOf(getInput(), getDecimalFormattedString(result.toString()))
                 edtInput.setText(getDecimalFormattedString(result.toString()))
-                edtOutput.setText("")
                 setState(CalculatorState.RESULT)
                 recordExpression.saveExpression(edtArrays[0], edtArrays[1])
+                edtOutput.setText("")
             } catch (e: Exception) {
                 setState(CalculatorState.ERROR)
                 edtOutput.setText(getString(R.string.default_error))
@@ -300,22 +304,20 @@ class MainActivity : AppCompatActivity() {
             CalculatorState.DEFAULT -> {
                 window.statusBarColor = ContextCompat.getColor(this, R.color.blue_a200)
                 currentState = CalculatorState.DEFAULT
-                clear.visibility = View.GONE
-                backspace.visibility = View.VISIBLE
+                btnClear.setImageResource(R.drawable.ic_backspace)
+
                 edtOutput.setTextColor(ContextCompat.getColor(this, R.color.black))
             }
             CalculatorState.RESULT -> {
                 window.statusBarColor = ContextCompat.getColor(this, R.color.light_green_400)
-                clear.visibility = View.VISIBLE
-                backspace.visibility = View.GONE
+                btnClear.setImageResource(R.drawable.ic_c)
                 edtOutput.setTextColor(ContextCompat.getColor(this, R.color.black))
                 currentState = CalculatorState.RESULT
             }
             CalculatorState.ERROR -> {
                 window.statusBarColor = ContextCompat.getColor(this, R.color.red_a400)
                 edtOutput.setTextColor(ContextCompat.getColor(this, R.color.red_500))
-                clear.visibility = View.VISIBLE
-                backspace.visibility = View.GONE
+                btnClear.setImageResource(R.drawable.ic_c)
                 currentState = CalculatorState.ERROR
             }
         }
